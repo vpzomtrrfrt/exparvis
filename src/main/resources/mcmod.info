@@ -1,0 +1,10 @@
+[
+{
+  "modid": "exparvis",
+  "name": "Ex Parvis",
+  "description": "Useful things for a skyblock world.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "authorList": ["VpzomTrrfrt"]
+}
+]
