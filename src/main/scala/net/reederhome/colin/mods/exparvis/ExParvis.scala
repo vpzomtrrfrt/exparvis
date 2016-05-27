@@ -21,11 +21,10 @@ import net.minecraftforge.oredict.ShapedOreRecipe
 import scala.collection.JavaConverters._
 import scala.util.Random
 
-@Mod(name = ExParvis.NAME, modid = ExParvis.MODID, version = ExParvis.VERSION, modLanguage = "scala")
+@Mod(name = ExParvis.NAME, modid = ExParvis.MODID, modLanguage = "scala")
 object ExParvis {
   final val NAME = "Ex Parvis"
   final val MODID = "exparvis"
-  final val VERSION = "${version}"
 
   @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
     serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")

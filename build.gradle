@@ -12,8 +12,14 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+
+plugins {
+   id "com.matthewprenger.cursegradle" version "1.0.7" 
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'scala'
+apply plugin: 'com.matthewprenger.cursegradle'
 
 /*
 // for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
@@ -79,5 +85,13 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+curseforge {
+    apiKey = System.env.CURSE_API_KEY != null ? "$System.env.CURSE_API_KEY" : ''
+    project {
+        id = '245526'
+        releaseType = 'alpha'
     }
 }
