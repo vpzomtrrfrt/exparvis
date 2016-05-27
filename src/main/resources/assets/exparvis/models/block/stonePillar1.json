@@ -1,0 +1,19 @@
+{
+	"ambientocclusion": false,
+	"textures": {
+		"all": "blocks/cobblestone"
+	},
+	"elements": [
+		{
+			"from": [1, 2, 1],
+			"to": [6, 3, 6],
+			"faces": {
+				"up": {"texture": "#all"},
+				"south": {"texture": "#all"},
+				"north": {"texture": "#all"},
+				"east": {"texture": "#all"},
+				"west": {"texture": "#all"}
+			}
+		}
+	]
+}

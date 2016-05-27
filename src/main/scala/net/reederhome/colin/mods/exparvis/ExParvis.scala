@@ -1,18 +1,22 @@
 package net.reederhome.colin.mods.exparvis
 
 import com.google.common.base.Predicate
-import net.minecraft.block.IGrowable
+import net.minecraft.block.{Block, IGrowable}
+import net.minecraft.block.properties.PropertyInteger
+import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
-import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventHandler
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent
+import net.minecraftforge.fml.common.registry.GameRegistry
+import net.minecraftforge.fml.common.{Mod, SidedProxy}
+import net.minecraftforge.oredict.ShapedOreRecipe
 
 import scala.collection.JavaConverters._
 import scala.util.Random
@@ -23,10 +27,23 @@ object ExParvis {
   final val MODID = "exparvis"
   final val VERSION = "${version}"
 
+  @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
+    serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")
+  var proxy: CommonProxy = _
+
   @EventHandler
   def preInit(event: FMLPreInitializationEvent): Unit = {
+    proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
+
+    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b' : Character, "ingotBrick"))
   }
+
+  @EventHandler
+  def init(event: FMLInitializationEvent): Unit = {
+    proxy.init()
+  }
+
 
   @SubscribeEvent
   def onLivingUpdate(event: LivingUpdateEvent): Unit = {
@@ -51,6 +68,7 @@ object ExParvis {
     }
     data.setBoolean(lastSneakKey, entity.isSneaking)
   }
+
 
   @SubscribeEvent
   def onTick(event: WorldTickEvent): Unit = {
@@ -86,5 +104,12 @@ object ExParvis {
         item.setDead()
       }
     }
+  }
+
+  def statesEqual(state1: IBlockState, state2: IBlockState) : Boolean = {
+    if(state1 == null || state2 == null) {
+      return state1 == state2;
+    }
+    state1.toString.equals(state2.toString);
   }
 }

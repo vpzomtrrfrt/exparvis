@@ -1,0 +1,39 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {},
+		"model": "exparvis:melter"
+	},
+	"variants": {
+		"stone_level": {
+			0: {},
+			1:{"submodel":{"pillar1":{"model":"exparvis:stonePillar1"},"pillar2":{"model":"exparvis:stonePillar1","y":180}}},
+			2:{"submodel":{"pillar1":{"model":"exparvis:stonePillar2"},"pillar2":{"model":"exparvis:stonePillar2","y":180}}},
+			3:{"submodel":{"pillar1":{"model":"exparvis:stonePillar3"},"pillar2":{"model":"exparvis:stonePillar3","y":180}}},
+			4:{"submodel":{"pillar1":{"model":"exparvis:stonePillar4"},"pillar2":{"model":"exparvis:stonePillar4","y":180}}},
+			5:{"submodel":{"pillar1":{"model":"exparvis:stonePillar5"},"pillar2":{"model":"exparvis:stonePillar5","y":180}}},
+			6:{"submodel":{"pillar1":{"model":"exparvis:stonePillar6"},"pillar2":{"model":"exparvis:stonePillar6","y":180}}},
+			7:{"submodel":{"pillar1":{"model":"exparvis:stonePillar7"},"pillar2":{"model":"exparvis:stonePillar7","y":180}}},
+			8:{"submodel":{"pillar1":{"model":"exparvis:stonePillar8"},"pillar2":{"model":"exparvis:stonePillar8","y":180}}},
+			9:{"submodel":{"pillar1":{"model":"exparvis:stonePillar9"},"pillar2":{"model":"exparvis:stonePillar9","y":180}}},
+			10:{"submodel":{"pillar1":{"model":"exparvis:stonePillar10"},"pillar2":{"model":"exparvis:stonePillar10","y":180}}},
+			11:{"submodel":{"pillar1":{"model":"exparvis:stonePillar11"},"pillar2":{"model":"exparvis:stonePillar11","y":180}}},
+			12:{"submodel":{"pillar1":{"model":"exparvis:stonePillar12"},"pillar2":{"model":"exparvis:stonePillar12","y":180}}}
+		},
+		"lava_level": {
+			0: {},
+			1:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar1"},"pillar4":{"model":"exparvis:lavaPillar1","y":180}}},
+			2:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar2"},"pillar4":{"model":"exparvis:lavaPillar2","y":180}}},
+			3:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar3"},"pillar4":{"model":"exparvis:lavaPillar3","y":180}}},
+			4:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar4"},"pillar4":{"model":"exparvis:lavaPillar4","y":180}}},
+			5:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar5"},"pillar4":{"model":"exparvis:lavaPillar5","y":180}}},
+			6:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar6"},"pillar4":{"model":"exparvis:lavaPillar6","y":180}}},
+			7:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar7"},"pillar4":{"model":"exparvis:lavaPillar7","y":180}}},
+			8:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar8"},"pillar4":{"model":"exparvis:lavaPillar8","y":180}}},
+			9:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar9"},"pillar4":{"model":"exparvis:lavaPillar9","y":180}}},
+			10:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar10"},"pillar4":{"model":"exparvis:lavaPillar10","y":180}}},
+			11:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar11"},"pillar4":{"model":"exparvis:lavaPillar11","y":180}}},
+			12:{"submodel":{"pillar3":{"model":"exparvis:lavaPillar12"},"pillar4":{"model":"exparvis:lavaPillar12","y":180}}}
+		}
+	}
+}
