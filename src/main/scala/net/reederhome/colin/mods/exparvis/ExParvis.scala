@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
@@ -68,6 +69,11 @@ object ExParvis {
     data.setBoolean(lastSneakKey, entity.isSneaking)
   }
 
+  def getAge(input : EntityItem): Short = {
+    val tag = new NBTTagCompound
+    input.writeEntityToNBT(tag)
+    tag.getShort("Age")
+  }
 
   @SubscribeEvent
   def onTick(event: WorldTickEvent): Unit = {
@@ -75,8 +81,9 @@ object ExParvis {
     val timeToCompost = 200
 
     val items: List[EntityItem] = event.world.getEntities[EntityItem](classOf[EntityItem], new Predicate[EntityItem] {
+
       override def apply(input: EntityItem): Boolean = {
-        input.getAge >= timeToCompost &&
+        getAge(input) >= timeToCompost &&
           ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.sapling) && input.getEntityItem.stackSize >= numToCompost) ||
             input.getEntityItem.getItem == Items.bucket && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
       }
