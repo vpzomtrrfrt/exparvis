@@ -84,16 +84,16 @@ object ExParvis {
 
       override def apply(input: EntityItem): Boolean = {
         getAge(input) >= timeToCompost &&
-          ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.sapling) && input.getEntityItem.stackSize >= numToCompost) ||
-            input.getEntityItem.getItem == Items.bucket && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
+          ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.SAPLING) && input.getEntityItem.stackSize >= numToCompost) ||
+            input.getEntityItem.getItem == Items.BUCKET && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
       }
     }).asScala.toList
     for (item: EntityItem <- items) {
       val stack = item.getEntityItem
       var result: ItemStack = null
-      if (stack.getItem == Items.bucket) {
+      if (stack.getItem == Items.BUCKET) {
         stack.stackSize -= 1
-        result = new ItemStack(Items.water_bucket)
+        result = new ItemStack(Items.WATER_BUCKET)
       }
       else {
         var composted = 0
@@ -101,7 +101,7 @@ object ExParvis {
           stack.stackSize -= numToCompost
           composted += 1
         }
-        result = new ItemStack(Blocks.dirt, composted)
+        result = new ItemStack(Blocks.DIRT, composted)
       }
       val newItem = new EntityItem(event.world, item.posX, item.posY, item.posZ)
       newItem.setEntityItemStack(result)

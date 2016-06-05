@@ -29,10 +29,10 @@ plugins {
 */
 version = "0.1.1"
 group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "exparvis"
+archivesBaseName = "exparvis-1.9.4"
 
 minecraft {
-    version = "1.9-12.16.1.1887"
+    version = "1.9.4-12.17.0.1939"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -40,7 +40,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20160312"
+    mappings = "snapshot_20160601"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 

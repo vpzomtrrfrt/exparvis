@@ -35,7 +35,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
     extraCobble = false
   }
 
-  override def isItemValidForSlot(i: Int, itemStack: ItemStack): Boolean = itemStack.getItem == Item.getItemFromBlock(Blocks.cobblestone)
+  override def isItemValidForSlot(i: Int, itemStack: ItemStack): Boolean = itemStack.getItem == Item.getItemFromBlock(Blocks.COBBLESTONE)
 
   override def openInventory(entityPlayer: EntityPlayer): Unit = {}
 
@@ -49,7 +49,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
 
   override def isUseableByPlayer(entityPlayer: EntityPlayer): Boolean = false
 
-  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.cobblestone) else null
+  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else null
 
   override def removeStackFromSlot(i: Int): ItemStack = null
 
@@ -81,11 +81,12 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
 
   override def getTankInfo(enumFacing: EnumFacing): Array[FluidTankInfo] = Array(new FluidTankInfo(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA))
 
-  override def writeToNBT(nbt: NBTTagCompound): Unit = {
+  override def writeToNBT(nbt: NBTTagCompound): NBTTagCompound = {
     super.writeToNBT(nbt)
     nbt.setBoolean("ExtraCobble", extraCobble)
     nbt.setInteger("Stone", stone)
     nbt.setDouble("Lava", lava)
+    nbt
   }
 
   override def readFromNBT(nbt: NBTTagCompound): Unit = {
@@ -98,10 +99,10 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
   def getMeltSpeed: Int = {
     val state = worldObj.getBlockState(getPos.down)
     state.getBlock match {
-      case Blocks.torch => 9
-      case Blocks.fire => 20
-      case Blocks.flowing_lava => 40
-      case Blocks.lava => 50
+      case Blocks.TORCH => 9
+      case Blocks.FIRE => 20
+      case Blocks.FLOWING_LAVA => 40
+      case Blocks.LAVA => 50
       case other => other.getLightValue(state) * 5
     }
   }
@@ -138,7 +139,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
     else stone
   }
 
-  override def getDescriptionPacket: Packet[_] = {
+  override def getUpdatePacket: SPacketUpdateTileEntity = {
     lastSyncState = getBlockState
     val tag = new NBTTagCompound
     writeToNBT(tag)
