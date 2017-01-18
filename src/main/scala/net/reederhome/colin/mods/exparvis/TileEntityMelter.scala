@@ -46,7 +46,7 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
   override def getField(i: Int): Int = 0
 
   override def setInventorySlotContents(i: Int, itemStack: ItemStack): Unit = {
-    extraCobble = isItemValidForSlot(i, itemStack) && itemStack.stackSize > 0
+    extraCobble = isItemValidForSlot(i, itemStack) && itemStack.getCount > 0
   }
 
   override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else null
@@ -162,4 +162,5 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
     override def getTankProperties: Array[IFluidTankProperties] = Array(new FluidTankProperties(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA, false, lava > 0))
   }
 
+  override def isEmpty: Boolean = !extraCobble
 }

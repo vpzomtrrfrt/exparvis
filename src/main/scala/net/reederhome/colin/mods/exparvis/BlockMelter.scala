@@ -19,17 +19,17 @@ object BlockMelter extends BlockModelContainer(Material.ROCK) {
 
   override def createNewTileEntity(world: World, i: Int): TileEntity = new TileEntityMelter
 
-  override def onBlockActivated(world: World, pos: BlockPos, state: IBlockState, player: EntityPlayer, hand: EnumHand, p_onBlockActivated_6_ : ItemStack, p_onBlockActivated_7_ : EnumFacing, p_onBlockActivated_8_ : Float, p_onBlockActivated_9_ : Float, p_onBlockActivated_10_ : Float): Boolean = {
+  override def onBlockActivated(world : World, pos : BlockPos, state : IBlockState, player : EntityPlayer, hand : EnumHand, p_onBlockActivated_6_ : EnumFacing, p_onBlockActivated_7_ : Float, p_onBlockActivated_8_ : Float, p_onBlockActivated_9_ : Float): Boolean = {
     if (world.isRemote) return true
     val held = player.getHeldItem(hand)
     val te = world.getTileEntity(pos).asInstanceOf[TileEntityMelter]
     if (held != null && held.getItem == Item.getItemFromBlock(Blocks.COBBLESTONE) && !te.extraCobble) {
       te.extraCobble = true
-      held.stackSize -= 1
+      held.shrink(1)
     }
     else if (held != null && held.getItem == Items.BUCKET && te.lava > 1000) {
       te.lava -= 1000
-      held.stackSize -= 1
+      held.shrink(1)
       if(!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
         player.dropItem(Items.LAVA_BUCKET, 1)
       }
