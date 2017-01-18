@@ -6,14 +6,16 @@ import net.minecraft.init.Blocks
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.network.{NetworkManager, Packet}
+import net.minecraft.network.NetworkManager
 import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{EnumFacing, ITickable}
 import net.minecraft.util.text.{ITextComponent, TextComponentTranslation}
-import net.minecraftforge.fluids._
+import net.minecraft.util.{EnumFacing, ITickable}
+import net.minecraftforge.common.capabilities.Capability
+import net.minecraftforge.fluids.{Fluid, FluidRegistry, FluidStack, FluidTankInfo}
+import net.minecraftforge.fluids.capability.{CapabilityFluidHandler, FluidTankProperties, IFluidHandler, IFluidTankProperties}
 
-class TileEntityMelter extends TileEntity with IInventory with IFluidHandler with ITickable {
+class TileEntityMelter extends TileEntity with IInventory with ITickable {
   val MAX_LAVA = 4000
   val MAX_STONE = 11000
   val RATIO = 4.0
@@ -59,25 +61,14 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
 
   override def hasCustomName: Boolean = false
 
-  override def drain(enumFacing: EnumFacing, fluidStack: FluidStack, really: Boolean): FluidStack = {
-    if (fluidStack.getFluid == FluidRegistry.LAVA) drain(enumFacing, fluidStack.amount, really)
-    else new FluidStack(fluidStack.getFluid, 0)
+  override def hasCapability(p_hasCapability_1_ : Capability[_], p_hasCapability_2_ : EnumFacing): Boolean = p_hasCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(p_hasCapability_1_, p_hasCapability_2_)
+
+  override def getCapability[T](p_getCapability_1_ : Capability[T], p_getCapability_2_ : EnumFacing): T = {
+    if(p_getCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+      return Handler.asInstanceOf[T]
+    }
+    super.getCapability(p_getCapability_1_, p_getCapability_2_)
   }
-
-  override def drain(enumFacing: EnumFacing, i: Int, really: Boolean): FluidStack = {
-    var tr = i
-    if (i > lava) tr = lava.toInt
-    if (really) lava -= tr
-    new FluidStack(FluidRegistry.LAVA, tr)
-  }
-
-  override def canFill(enumFacing: EnumFacing, fluid: Fluid): Boolean = false
-
-  override def canDrain(enumFacing: EnumFacing, fluid: Fluid): Boolean = fluid == FluidRegistry.LAVA
-
-  override def fill(enumFacing: EnumFacing, fluidStack: FluidStack, really: Boolean): Int = 0
-
-  override def getTankInfo(enumFacing: EnumFacing): Array[FluidTankInfo] = Array(new FluidTankInfo(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA))
 
   override def writeToNBT(nbt: NBTTagCompound): NBTTagCompound = {
     super.writeToNBT(nbt)
@@ -152,4 +143,23 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
   def getBlockState: IBlockState = BlockMelter.getActualState(world.getBlockState(pos), world, pos)
 
   override def isUsableByPlayer(entityPlayer: EntityPlayer): Boolean = false
+
+  object Handler extends IFluidHandler {
+    override def drain(fluidStack: FluidStack, really: Boolean): FluidStack = {
+      if (fluidStack.getFluid == FluidRegistry.LAVA) drain(fluidStack.amount, really)
+      else new FluidStack(fluidStack.getFluid, 0)
+    }
+
+    override def drain(i: Int, really: Boolean): FluidStack = {
+      var tr = i
+      if (i > lava) tr = lava.toInt
+      if (really) lava -= tr
+      new FluidStack(FluidRegistry.LAVA, tr)
+    }
+
+    override def fill(fluidStack: FluidStack, really: Boolean): Int = 0
+
+    override def getTankProperties: Array[IFluidTankProperties] = Array(new FluidTankProperties(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA, false, lava > 0))
+  }
+
 }
