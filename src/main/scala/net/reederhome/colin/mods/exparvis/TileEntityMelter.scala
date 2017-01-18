@@ -21,7 +21,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
   var extraCobble = false
   var lava = 0.0
   var stone = 0
-  var lastSyncState : IBlockState = _
+  var lastSyncState: IBlockState = _
 
   override def decrStackSize(i: Int, i1: Int): ItemStack = null
 
@@ -35,7 +35,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
     extraCobble = false
   }
 
-  override def isItemValidForSlot(i: Int, itemStack: ItemStack): Boolean = itemStack.getItem == Item.getItemFromBlock(Blocks.cobblestone)
+  override def isItemValidForSlot(i: Int, itemStack: ItemStack): Boolean = itemStack.getItem == Item.getItemFromBlock(Blocks.COBBLESTONE)
 
   override def openInventory(entityPlayer: EntityPlayer): Unit = {}
 
@@ -47,9 +47,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
     extraCobble = isItemValidForSlot(i, itemStack) && itemStack.stackSize > 0
   }
 
-  override def isUseableByPlayer(entityPlayer: EntityPlayer): Boolean = false
-
-  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.cobblestone) else null
+  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else null
 
   override def removeStackFromSlot(i: Int): ItemStack = null
 
@@ -81,11 +79,12 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
 
   override def getTankInfo(enumFacing: EnumFacing): Array[FluidTankInfo] = Array(new FluidTankInfo(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA))
 
-  override def writeToNBT(nbt: NBTTagCompound): Unit = {
+  override def writeToNBT(nbt: NBTTagCompound): NBTTagCompound = {
     super.writeToNBT(nbt)
     nbt.setBoolean("ExtraCobble", extraCobble)
     nbt.setInteger("Stone", stone)
     nbt.setDouble("Lava", lava)
+    nbt
   }
 
   override def readFromNBT(nbt: NBTTagCompound): Unit = {
@@ -96,18 +95,18 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
   }
 
   def getMeltSpeed: Int = {
-    val state = worldObj.getBlockState(getPos.down)
+    val state = world.getBlockState(getPos.down)
     state.getBlock match {
-      case Blocks.torch => 9
-      case Blocks.fire => 20
-      case Blocks.flowing_lava => 40
-      case Blocks.lava => 50
+      case Blocks.TORCH => 9
+      case Blocks.FIRE => 20
+      case Blocks.FLOWING_LAVA => 40
+      case Blocks.LAVA => 50
       case other => other.getLightValue(state) * 5
     }
   }
 
   override def update(): Unit = {
-    if(worldObj.isRemote) return
+    if (world.isRemote) return
     if (stone > 0) {
       val speed = getMeltSpeed
       var tr = speed
@@ -128,8 +127,8 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
       stone += 1000
     }
     val newstate = getBlockState
-    if(!ExParvis.statesEqual(newstate, lastSyncState)) {
-      worldObj.notifyBlockUpdate(pos, newstate, newstate, 3)
+    if (!ExParvis.statesEqual(newstate, lastSyncState)) {
+      world.notifyBlockUpdate(pos, newstate, newstate, 3)
     }
   }
 
@@ -138,7 +137,7 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
     else stone
   }
 
-  override def getDescriptionPacket: Packet[_] = {
+  override def getUpdatePacket: SPacketUpdateTileEntity = {
     lastSyncState = getBlockState
     val tag = new NBTTagCompound
     writeToNBT(tag)
@@ -147,8 +146,10 @@ class TileEntityMelter extends TileEntity with IInventory with IFluidHandler wit
 
   override def onDataPacket(networkManager: NetworkManager, packet: SPacketUpdateTileEntity): Unit = {
     readFromNBT(packet.getNbtCompound)
-    worldObj.markBlockRangeForRenderUpdate(pos, pos)
+    world.markBlockRangeForRenderUpdate(pos, pos)
   }
 
-  def getBlockState : IBlockState = BlockMelter.getActualState(worldObj.getBlockState(pos), worldObj, pos)
+  def getBlockState: IBlockState = BlockMelter.getActualState(world.getBlockState(pos), world, pos)
+
+  override def isUsableByPlayer(entityPlayer: EntityPlayer): Boolean = false
 }

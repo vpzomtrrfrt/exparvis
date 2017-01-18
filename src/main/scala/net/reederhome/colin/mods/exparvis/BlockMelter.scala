@@ -2,7 +2,7 @@ package net.reederhome.colin.mods.exparvis
 
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.tileentity.TileEntity
@@ -11,7 +11,7 @@ import net.minecraft.util.text.TextComponentTranslation
 import net.minecraft.util.{EnumFacing, EnumHand}
 import net.minecraft.world.{IBlockAccess, World}
 
-object BlockMelter extends BlockModelContainer(Material.rock) {
+object BlockMelter extends BlockModelContainer(Material.ROCK) {
   setDefaultState(blockState.getBaseState.withProperty(Properties.LAVA_LEVEL, 0: Integer).withProperty(Properties.STONE_LEVEL, 0: Integer))
   setUnlocalizedName("melter")
 
@@ -23,19 +23,19 @@ object BlockMelter extends BlockModelContainer(Material.rock) {
     if (world.isRemote) return true
     val held = player.getHeldItem(hand)
     val te = world.getTileEntity(pos).asInstanceOf[TileEntityMelter]
-    if (held != null && held.getItem == Item.getItemFromBlock(Blocks.cobblestone) && !te.extraCobble) {
+    if (held != null && held.getItem == Item.getItemFromBlock(Blocks.COBBLESTONE) && !te.extraCobble) {
       te.extraCobble = true
       held.stackSize -= 1
     }
-    else if (held != null && held.getItem == Items.bucket && te.lava > 1000) {
+    else if (held != null && held.getItem == Items.BUCKET && te.lava > 1000) {
       te.lava -= 1000
       held.stackSize -= 1
-      if(!player.inventory.addItemStackToInventory(new ItemStack(Items.lava_bucket))) {
-        player.dropItem(Items.lava_bucket, 1)
+      if(!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
+        player.dropItem(Items.LAVA_BUCKET, 1)
       }
     }
     else {
-      player.addChatComponentMessage(new TextComponentTranslation("tile.melter.status", new Integer(te.getEquivalentCobble), new Integer(te.lava.toInt), new Integer(te.getMeltSpeed)))
+      player.sendMessage(new TextComponentTranslation("tile.melter.status", new Integer(te.getEquivalentCobble), new Integer(te.lava.toInt), new Integer(te.getMeltSpeed)))
     }
     true
   }

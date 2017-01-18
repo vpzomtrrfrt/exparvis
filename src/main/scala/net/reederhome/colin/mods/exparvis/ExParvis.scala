@@ -21,6 +21,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe
 
 import scala.collection.JavaConverters._
 import scala.util.Random
+import scala.util.control.Breaks
 
 @Mod(name = ExParvis.NAME, modid = ExParvis.MODID, modLanguage = "scala")
 object ExParvis {
@@ -48,22 +49,37 @@ object ExParvis {
   @SubscribeEvent
   def onLivingUpdate(event: LivingUpdateEvent): Unit = {
     val entity = event.getEntityLiving
-    val world = entity.worldObj
+    val world = entity.world
     val data = entity.getEntityData
     val lastSneakKey = "LastTickSneaking"
-    val range = 1
-    if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.02) {
-      val x = event.getEntity.posX + Random.nextInt(range * 2 + 1) - range
-      val y = event.getEntity.posY
-      val z = event.getEntity.posZ + Random.nextInt(range * 2 + 1) - range
-      val pos = new BlockPos(x, y, z)
-      val state = world.getBlockState(pos)
-      val block = state.getBlock
-      if (block.isInstanceOf[IGrowable]) {
-        val growable = block.asInstanceOf[IGrowable]
-        if (!world.isRemote && growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, new java.util.Random(), pos, state)) {
-          growable.grow(world, new java.util.Random(), pos, state)
+    val range = 2
+
+    if(world.isRemote) {
+      return
+    }
+
+    if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.05) {
+      var success = false
+      Breaks.breakable {
+        for (i <- 1 to 5) {
+          val x = event.getEntity.posX + Random.nextGaussian() * range
+          val y = event.getEntity.posY + Random.nextInt(3) - 1
+          val z = event.getEntity.posZ + Random.nextGaussian() * range
+          val pos = new BlockPos(x, y, z)
+          val state = world.getBlockState(pos)
+          val block = state.getBlock
+          if (block.isInstanceOf[IGrowable]) {
+            val growable = block.asInstanceOf[IGrowable]
+            if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
+              growable.grow(world, new java.util.Random(), pos, state)
+              success = true
+              Breaks.break()
+            }
+          }
         }
+      }
+      if(!success) {
+        println("Sorry")
       }
     }
     data.setBoolean(lastSneakKey, entity.isSneaking)
@@ -84,16 +100,16 @@ object ExParvis {
 
       override def apply(input: EntityItem): Boolean = {
         getAge(input) >= timeToCompost &&
-          ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.sapling) && input.getEntityItem.stackSize >= numToCompost) ||
-            input.getEntityItem.getItem == Items.bucket && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
+          ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.SAPLING) && input.getEntityItem.stackSize >= numToCompost) ||
+            input.getEntityItem.getItem == Items.BUCKET && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
       }
     }).asScala.toList
     for (item: EntityItem <- items) {
       val stack = item.getEntityItem
       var result: ItemStack = null
-      if (stack.getItem == Items.bucket) {
+      if (stack.getItem == Items.BUCKET) {
         stack.stackSize -= 1
-        result = new ItemStack(Items.water_bucket)
+        result = new ItemStack(Items.WATER_BUCKET)
       }
       else {
         var composted = 0
@@ -101,11 +117,11 @@ object ExParvis {
           stack.stackSize -= numToCompost
           composted += 1
         }
-        result = new ItemStack(Blocks.dirt, composted)
+        result = new ItemStack(Blocks.DIRT, composted)
       }
       val newItem = new EntityItem(event.world, item.posX, item.posY, item.posZ)
       newItem.setEntityItemStack(result)
-      event.world.spawnEntityInWorld(newItem)
+      event.world.spawnEntity(newItem)
       if (stack.stackSize == 0) {
         item.setDead()
       }
