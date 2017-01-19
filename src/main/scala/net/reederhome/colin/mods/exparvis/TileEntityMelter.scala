@@ -82,7 +82,7 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
     super.readFromNBT(nbt)
     extraCobble = nbt.getBoolean("ExtraCobble")
     stone = nbt.getInteger("Stone")
-    lava = nbt.getInteger("Lava")
+    lava = nbt.getDouble("Lava")
   }
 
   def getMeltSpeed: Int = {
@@ -92,6 +92,7 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
       case Blocks.FIRE => 20
       case Blocks.FLOWING_LAVA => 40
       case Blocks.LAVA => 50
+      case Blocks.MAGMA => 60
       case other => other.getLightValue(state) * 5
     }
   }
