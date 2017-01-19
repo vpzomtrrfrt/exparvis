@@ -32,7 +32,7 @@ group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mi
 archivesBaseName = "exparvis"
 
 minecraft {
-    version = "1.11-13.19.1.2189"
+    version = "1.11-13.19.1.2199"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.

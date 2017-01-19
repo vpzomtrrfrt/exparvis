@@ -27,6 +27,7 @@ import scala.util.control.Breaks
 object ExParvis {
   final val NAME = "Ex Parvis"
   final val MODID = "exparvis"
+  println("hOI!")
 
   @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
     serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")
@@ -36,13 +37,12 @@ object ExParvis {
   def preInit(event: FMLPreInitializationEvent): Unit = {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
-
-    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b' : Character, "ingotBrick"))
   }
 
   @EventHandler
   def init(event: FMLInitializationEvent): Unit = {
     proxy.init()
+    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b' : Character, "ingotBrick"))
   }
 
 

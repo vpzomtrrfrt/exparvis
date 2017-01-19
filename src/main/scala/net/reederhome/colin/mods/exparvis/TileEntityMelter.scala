@@ -25,7 +25,7 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
   var stone = 0
   var lastSyncState: IBlockState = _
 
-  override def decrStackSize(i: Int, i1: Int): ItemStack = null
+  override def decrStackSize(i: Int, i1: Int): ItemStack = ItemStack.EMPTY
 
   override def closeInventory(entityPlayer: EntityPlayer): Unit = {}
 
@@ -49,9 +49,9 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
     extraCobble = isItemValidForSlot(i, itemStack) && itemStack.getCount > 0
   }
 
-  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else null
+  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else ItemStack.EMPTY
 
-  override def removeStackFromSlot(i: Int): ItemStack = null
+  override def removeStackFromSlot(i: Int): ItemStack = ItemStack.EMPTY
 
   override def setField(i: Int, i1: Int): Unit = {}
 
