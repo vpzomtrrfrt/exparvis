@@ -2,6 +2,7 @@ package net.reederhome.colin.mods.exparvis
 
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
+import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
@@ -14,6 +15,7 @@ import net.minecraft.world.{IBlockAccess, World}
 object BlockMelter extends BlockModelContainer(Material.ROCK) {
   setDefaultState(blockState.getBaseState.withProperty(Properties.LAVA_LEVEL, 0: Integer).withProperty(Properties.STONE_LEVEL, 0: Integer))
   setUnlocalizedName("melter")
+  setCreativeTab(CreativeTabs.MISC)
 
   override def createBlockState(): BlockStateContainer = new BlockStateContainer(this, Properties.LAVA_LEVEL, Properties.STONE_LEVEL)
 
@@ -36,6 +38,9 @@ object BlockMelter extends BlockModelContainer(Material.ROCK) {
     }
     else {
       player.sendMessage(new TextComponentTranslation("tile.melter.status", new Integer(te.getEquivalentCobble), new Integer(te.lava.toInt), new Integer(te.getMeltSpeed)))
+      if(te.getMeltSpeed == 0) {
+        player.sendMessage(new TextComponentTranslation("tile.melter.advice1"))
+      }
     }
     true
   }

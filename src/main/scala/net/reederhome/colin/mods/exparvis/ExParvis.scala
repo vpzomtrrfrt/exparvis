@@ -58,7 +58,7 @@ object ExParvis {
       return
     }
 
-    if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.05) {
+    if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.03) {
       var success = false
       Breaks.breakable {
         for (i <- 1 to 5) {
@@ -68,7 +68,7 @@ object ExParvis {
           val pos = new BlockPos(x, y, z)
           val state = world.getBlockState(pos)
           val block = state.getBlock
-          if (block.isInstanceOf[IGrowable]) {
+          if (block.isInstanceOf[IGrowable] && (block != Blocks.GRASS || i > 3)) {
             val growable = block.asInstanceOf[IGrowable]
             if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
               growable.grow(world, new java.util.Random(), pos, state)
@@ -130,8 +130,8 @@ object ExParvis {
 
   def statesEqual(state1: IBlockState, state2: IBlockState) : Boolean = {
     if(state1 == null || state2 == null) {
-      return state1 == state2;
+      return state1 == state2
     }
-    state1.toString.equals(state2.toString);
+    state1.toString.equals(state2.toString)
   }
 }
