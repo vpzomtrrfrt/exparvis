@@ -29,7 +29,7 @@ plugins {
 */
 version = "0.2.0"
 group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "exparvis"
+archivesBaseName = "exparvis-1.11"
 
 minecraft {
     version = "1.11-13.19.1.2199"
