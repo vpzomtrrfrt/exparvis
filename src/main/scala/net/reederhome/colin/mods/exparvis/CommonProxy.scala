@@ -8,6 +8,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry
 class CommonProxy {
   def preInit(): Unit = {
     registerBlock(BlockMelter, "melter")
+    registerItem(ItemPebble, "pebble")
+    registerItem(ItemHammer.Stone, "hammerStone")
+    registerItem(ItemHammer.Iron, "hammerIron")
 
     GameRegistry.registerTileEntity(classOf[TileEntityMelter], "Melter")
   }

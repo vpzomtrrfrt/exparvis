@@ -1,3 +1,6 @@
 tile.melter.name=Melter
 tile.melter.status=Contains %1$d bits of stone, %2$d MB of lava, melting speed %3$d
 tile.melter.advice1=Try placing something hot underneath
+item.pebble.name=Pebble
+item.hammer.STONE.name=Stone Sledgehammer
+item.hammer.IRON.name=Iron Sledgehammer

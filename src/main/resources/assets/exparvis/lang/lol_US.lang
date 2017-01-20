@@ -1,3 +1,6 @@
 tile.melter.name=Meltr
 tile.melter.status=Haz %1$d pebblez, %2$d MB of hot sauce, melting speed iz %3$d
 tile.melter.advice1=Needz to sit on HOT STUFFZ
+item.pebble.name=Itteh Bitteh Rock
+item.hammer.STONE.name=Ston Hammah
+item.hammer.IRON.name=Iron Hammah

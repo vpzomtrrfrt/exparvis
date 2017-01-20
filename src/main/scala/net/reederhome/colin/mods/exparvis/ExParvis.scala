@@ -1,23 +1,26 @@
 package net.reederhome.colin.mods.exparvis
 
+import java.util
+
 import com.google.common.base.Predicate
-import net.minecraft.block.{Block, IGrowable}
-import net.minecraft.block.properties.PropertyInteger
+import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.{Item, ItemStack, ItemSword}
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
+import net.minecraftforge.event.world.BlockEvent.{BreakEvent, HarvestDropsEvent}
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent
 import net.minecraftforge.fml.common.registry.GameRegistry
 import net.minecraftforge.fml.common.{Mod, SidedProxy}
-import net.minecraftforge.oredict.ShapedOreRecipe
+import net.minecraftforge.oredict.{OreDictionary, ShapedOreRecipe}
 
 import scala.collection.JavaConverters._
 import scala.util.Random
@@ -37,7 +40,10 @@ object ExParvis {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
 
-    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b' : Character, "ingotBrick"))
+    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick"))
+    GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble))
+    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood"))
+    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood"))
   }
 
   @EventHandler
@@ -54,7 +60,7 @@ object ExParvis {
     val lastSneakKey = "LastTickSneaking"
     val range = 2
 
-    if(world.isRemote) {
+    if (world.isRemote) {
       return
     }
 
@@ -68,7 +74,7 @@ object ExParvis {
           val pos = new BlockPos(x, y, z)
           val state = world.getBlockState(pos)
           val block = state.getBlock
-          if (block.isInstanceOf[IGrowable] && (block != Blocks.GRASS || i > 3)) {
+          if (block.isInstanceOf[IGrowable] && block != Blocks.GRASS) {
             val growable = block.asInstanceOf[IGrowable]
             if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
               growable.grow(world, new java.util.Random(), pos, state)
@@ -78,14 +84,40 @@ object ExParvis {
           }
         }
       }
-      if(!success) {
-        println("Sorry")
-      }
     }
     data.setBoolean(lastSneakKey, entity.isSneaking)
   }
 
-  def getAge(input : EntityItem): Short = {
+  @SubscribeEvent
+  def onBlockDrops(event: HarvestDropsEvent): Unit = {
+    if(event.getHarvester != null) {
+      val sneaking = event.getHarvester.isSneaking
+      def applyDrops(siftingType: SiftingType): Unit = {
+        println("hai")
+        SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
+          case Some(x) =>
+            while (event.getDrops.size() > 0) {
+              event.getDrops.remove(0)
+            }
+            event.getDrops.addAll(util.Arrays.asList(x: _*))
+          case None =>
+        }
+      }
+
+      val heldItem = event.getHarvester.getHeldItem(EnumHand.MAIN_HAND)
+      if(heldItem != null) {
+        if (sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
+          // it's a stick
+          applyDrops(SiftingType.STICK)
+        }
+        else if (heldItem != null && heldItem.getItem.isInstanceOf[ItemHammer]) {
+          applyDrops(SiftingType.GRIND)
+        }
+      }
+    }
+  }
+
+  def getAge(input: EntityItem): Short = {
     val tag = new NBTTagCompound
     input.writeEntityToNBT(tag)
     tag.getShort("Age")
@@ -128,8 +160,8 @@ object ExParvis {
     }
   }
 
-  def statesEqual(state1: IBlockState, state2: IBlockState) : Boolean = {
-    if(state1 == null || state2 == null) {
+  def statesEqual(state1: IBlockState, state2: IBlockState): Boolean = {
+    if (state1 == null || state2 == null) {
       return state1 == state2
     }
     state1.toString.equals(state2.toString)

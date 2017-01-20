@@ -19,6 +19,7 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'scala'
+apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
 
 /*
