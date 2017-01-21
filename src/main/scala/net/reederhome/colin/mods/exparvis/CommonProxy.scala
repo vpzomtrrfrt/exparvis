@@ -11,6 +11,7 @@ class CommonProxy {
     registerItem(ItemPebble, "pebble")
     registerItem(ItemHammer.Stone, "hammerStone")
     registerItem(ItemHammer.Iron, "hammerIron")
+    registerItem(ItemOreNugget, "oreNugget")
 
     GameRegistry.registerTileEntity(classOf[TileEntityMelter], "Melter")
   }

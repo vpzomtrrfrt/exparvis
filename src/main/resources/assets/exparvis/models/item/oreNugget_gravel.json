@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "exparvis:items/oreNugget_gravel",
+        "layer1": "exparvis:items/oreNugget_gravel_2"
+    }
+}
