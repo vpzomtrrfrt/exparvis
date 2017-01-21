@@ -1,23 +1,27 @@
 package net.reederhome.colin.mods.exparvis
 
+import java.util
+
 import com.google.common.base.Predicate
-import net.minecraft.block.{Block, IGrowable}
-import net.minecraft.block.properties.PropertyInteger
+import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
+import net.minecraft.item.crafting.FurnaceRecipes
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent
 import net.minecraftforge.fml.common.registry.GameRegistry
 import net.minecraftforge.fml.common.{Mod, SidedProxy}
-import net.minecraftforge.oredict.ShapedOreRecipe
+import net.minecraftforge.oredict.{OreDictionary, ShapedOreRecipe}
 
 import scala.collection.JavaConverters._
 import scala.util.Random
@@ -95,7 +99,6 @@ object ExParvis {
     if(event.getHarvester != null) {
       val sneaking = event.getHarvester.isSneaking
       def applyDrops(siftingType: SiftingType): Unit = {
-        println("hai")
         SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
           case Some(x) =>
             while (event.getDrops.size() > 0) {
