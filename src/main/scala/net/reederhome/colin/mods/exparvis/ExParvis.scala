@@ -7,6 +7,7 @@ import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
+import net.minecraft.item.crafting.FurnaceRecipes
 import net.minecraft.item.{Item, ItemStack, ItemSword}
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumHand
@@ -44,6 +45,11 @@ object ExParvis {
     GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble))
     GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood"))
     GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood"))
+
+    ItemOreNugget.Type.getTypes.foreach((f) => {
+      GameRegistry.addRecipe(new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
+      FurnaceRecipes.instance().addSmelting(Item.getItemFromBlock(BlockNuggetOre.getBlock(f.id)), new ItemStack(f.resourceItem), 1f)
+    })
   }
 
   @EventHandler

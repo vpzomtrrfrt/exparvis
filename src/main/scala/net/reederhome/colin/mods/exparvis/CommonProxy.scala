@@ -12,6 +12,7 @@ class CommonProxy {
     registerItem(ItemHammer.Stone, "hammerStone")
     registerItem(ItemHammer.Iron, "hammerIron")
     registerItem(ItemOreNugget, "oreNugget")
+    ItemOreNugget.Type.getTypes.foreach((f) => registerBlock(new BlockNuggetOre(f), "nuggetOre_"+f.getName))
 
     GameRegistry.registerTileEntity(classOf[TileEntityMelter], "Melter")
   }

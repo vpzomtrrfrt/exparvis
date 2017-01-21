@@ -1,10 +1,13 @@
 package net.reederhome.colin.mods.exparvis
 
+import net.minecraft.block.state.IBlockState
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.block.model.{ModelBakery, ModelResourceLocation}
-import net.minecraft.client.renderer.color.IItemColor
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.client.renderer.color.{IBlockColor, IItemColor}
+import net.minecraft.item.{Item, ItemBlock, ItemStack}
 import net.minecraft.util.ResourceLocation
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.IBlockAccess
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -33,6 +36,22 @@ class ClientProxy extends CommonProxy {
     Minecraft.getMinecraft.getItemColors.registerItemColorHandler(new IItemColor {
       override def getColorFromItemstack(itemStack: ItemStack, i: Int): Int = ItemOreNugget.getColor(itemStack, i)
     }, ItemOreNugget)
+
+    Minecraft.getMinecraft.getBlockColors.registerBlockColorHandler(new IBlockColor {
+      override def colorMultiplier(iBlockState: IBlockState, iBlockAccess: IBlockAccess, blockPos: BlockPos, i: Int): Int = iBlockState.getBlock match {
+        case b : BlockNuggetOre => b.getColor
+        case _ => 0xFFFFFF
+      }
+    }, BlockNuggetOre.getBlocks.toSeq : _*)
+    Minecraft.getMinecraft.getItemColors.registerItemColorHandler(new IItemColor {
+      override def getColorFromItemstack(itemStack: ItemStack, i: Int): Int = itemStack.getItem match {
+        case ib : ItemBlock => ib.block match {
+          case b : BlockNuggetOre => b.getColor
+          case _ => 0xFFFFFF
+        }
+        case _ => 0xFFFFFF
+      }
+    }, BlockNuggetOre.getBlocks.map((f) => Item.getItemFromBlock(f)).toSeq: _*)
   }
 
   def registerModel(item: Item, meta: Int, model: String): Unit = {

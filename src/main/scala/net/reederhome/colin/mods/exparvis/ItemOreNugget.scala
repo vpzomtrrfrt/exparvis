@@ -1,5 +1,6 @@
 package net.reederhome.colin.mods.exparvis
 
+import net.minecraft.init.Items
 import net.minecraft.item.{Item, ItemStack}
 
 import scala.collection.mutable
@@ -31,7 +32,7 @@ object ItemOreNugget extends Item {
 
   def getStack(typ: Type): ItemStack = new ItemStack(this, 1, typ.id)
 
-  case class Type private(id: Int, base: String, resource: String, color: Int) {
+  case class Type private(id: Int, base: String, resourceItem: Item, resource: String, color: Int) {
     if (Type.map.contains(id)) {
       throw new IllegalArgumentException("Nugget type ID conflict: " + id + " used by " + getName + " and " + Type.map(id).getName)
     }
@@ -47,8 +48,8 @@ object ItemOreNugget extends Item {
 
     val map = new mutable.HashMap[Int, Type]()
 
-    val GRAVEL_IRON = Type(1, "gravel", "iron", 0xd8af93)
-    val GRAVEL_GOLD = Type(2, "gravel", "gold", 0xfcee4b)
+    val GRAVEL_IRON = Type(1, "gravel", Items.IRON_INGOT, "iron", 0xd8af93)
+    val GRAVEL_GOLD = Type(2, "gravel", Items.GOLD_INGOT, "gold", 0xfcee4b)
   }
 
 }
