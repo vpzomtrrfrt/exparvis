@@ -1,0 +1,7 @@
+{
+	"parent": "exparvis:block/nuggetOre",
+	"textures": {
+		"base": "blocks/gravel",
+		"overlay": "exparvis:blocks/nuggetOre_gravel_overlay"
+	}
+}

@@ -27,7 +27,6 @@ import scala.util.control.Breaks
 object ExParvis {
   final val NAME = "Ex Parvis"
   final val MODID = "exparvis"
-  println("hOI!")
 
   @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
     serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")
@@ -37,12 +36,21 @@ object ExParvis {
   def preInit(event: FMLPreInitializationEvent): Unit = {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
+
+    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick"))
+    GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble))
+    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood"))
+    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood"))
+
+    ItemOreNugget.Type.getTypes.foreach((f) => {
+      GameRegistry.addRecipe(new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
+      FurnaceRecipes.instance().addSmelting(Item.getItemFromBlock(BlockNuggetOre.getBlock(f.id)), new ItemStack(f.resourceItem), 1f)
+    })
   }
 
   @EventHandler
   def init(event: FMLInitializationEvent): Unit = {
     proxy.init()
-    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b' : Character, "ingotBrick"))
   }
 
 
@@ -54,7 +62,7 @@ object ExParvis {
     val lastSneakKey = "LastTickSneaking"
     val range = 2
 
-    if(world.isRemote) {
+    if (world.isRemote) {
       return
     }
 
@@ -68,7 +76,7 @@ object ExParvis {
           val pos = new BlockPos(x, y, z)
           val state = world.getBlockState(pos)
           val block = state.getBlock
-          if (block.isInstanceOf[IGrowable] && (block != Blocks.GRASS || i > 3)) {
+          if (block.isInstanceOf[IGrowable] && block != Blocks.GRASS) {
             val growable = block.asInstanceOf[IGrowable]
             if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
               growable.grow(world, new java.util.Random(), pos, state)
@@ -78,14 +86,40 @@ object ExParvis {
           }
         }
       }
-      if(!success) {
-        println("Sorry")
-      }
     }
     data.setBoolean(lastSneakKey, entity.isSneaking)
   }
 
-  def getAge(input : EntityItem): Short = {
+  @SubscribeEvent
+  def onBlockDrops(event: HarvestDropsEvent): Unit = {
+    if(event.getHarvester != null) {
+      val sneaking = event.getHarvester.isSneaking
+      def applyDrops(siftingType: SiftingType): Unit = {
+        println("hai")
+        SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
+          case Some(x) =>
+            while (event.getDrops.size() > 0) {
+              event.getDrops.remove(0)
+            }
+            event.getDrops.addAll(util.Arrays.asList(x: _*))
+          case None =>
+        }
+      }
+
+      val heldItem = event.getHarvester.getHeldItem(EnumHand.MAIN_HAND)
+      if(heldItem != null) {
+        if (sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
+          // it's a stick
+          applyDrops(SiftingType.STICK)
+        }
+        else if (heldItem != null && heldItem.getItem.isInstanceOf[ItemHammer]) {
+          applyDrops(SiftingType.GRIND)
+        }
+      }
+    }
+  }
+
+  def getAge(input: EntityItem): Short = {
     val tag = new NBTTagCompound
     input.writeEntityToNBT(tag)
     tag.getShort("Age")
@@ -128,8 +162,8 @@ object ExParvis {
     }
   }
 
-  def statesEqual(state1: IBlockState, state2: IBlockState) : Boolean = {
-    if(state1 == null || state2 == null) {
+  def statesEqual(state1: IBlockState, state2: IBlockState): Boolean = {
+    if (state1 == null || state2 == null) {
       return state1 == state2
     }
     state1.toString.equals(state2.toString)
