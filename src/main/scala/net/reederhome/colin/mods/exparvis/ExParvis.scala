@@ -6,6 +6,7 @@ import com.google.common.base.Predicate
 import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.crafting.FurnaceRecipes
 import net.minecraft.item.{Item, ItemStack, ItemSword}
@@ -85,6 +86,7 @@ object ExParvis {
             if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
               growable.grow(world, new java.util.Random(), pos, state)
               success = true
+              world.playEvent(2005, pos, 0)
               Breaks.break()
             }
           }
