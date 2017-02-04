@@ -143,18 +143,18 @@ class TileEntityMelter extends TileEntity with ITickable {
         // already full
         return itemStack
       }
-      if (itemStack.stackSize == 1) {
+      if (itemStack.getCount == 1) {
         if (!simulate) {
           extraCobble = true
         }
         return null
       }
-      if (itemStack.stackSize > 1) {
+      if (itemStack.getCount > 1) {
         if (!simulate) {
           extraCobble = true
         }
         val tr = itemStack.copy()
-        tr.stackSize -= 1
+        tr.shrink(1)
         return tr
       }
       null // must be smaller than 1 (not sure if this ever happens)
@@ -167,7 +167,7 @@ class TileEntityMelter extends TileEntity with ITickable {
     }
 
     override def extractItem(i: Int, i1: Int, b: Boolean): ItemStack = null
-  }
 
-  override def isEmpty: Boolean = !extraCobble
+    override def getSlotLimit(i: Int): Int = 1
+  }
 }
