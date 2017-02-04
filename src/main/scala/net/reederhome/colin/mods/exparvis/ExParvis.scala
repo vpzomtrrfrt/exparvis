@@ -101,7 +101,6 @@ object ExParvis {
     if(event.getHarvester != null) {
       val sneaking = event.getHarvester.isSneaking
       def applyDrops(siftingType: SiftingType): Unit = {
-        println("hai")
         SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
           case Some(x) =>
             while (event.getDrops.size() > 0) {
