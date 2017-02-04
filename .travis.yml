@@ -1,22 +1,24 @@
 language: scala
 scala:
-- 2.10.1
+	- 2.10.1
+jdk:
+        - oraclejdk8
 before_deploy:
-  - ./gradlew build
-  - export THE_JAR=$(ls build/libs/exparvis*.jar | head -n 1)
-  - echo "found $THE_JAR for deploying"
+	- ./gradlew build
+	- export THE_JAR=$(ls build/libs/exparvis*.jar | head -n 1)
+	- echo "found $THE_JAR for deploying"
 deploy:
-  - provider: releases
-    api_key:
-      secure: ttvhQOd0FIggFWrL9Nsq4knUUoxp9t0uCwehyLP1o9yWTZKRVfgIf+UoUn42GJCGdOntzd09yQbGzzZTEYBGw2/EM16oJSZxUHul1TaPDIQ4FGxhB9nH6ysGhknIcjCRY7yt9kGuXHVbW0J6gTIy0V/FNNtoQCcwVbZAwTLWAg7mt441XbvwmYeX2p1NekzfKM7ni6E3ZdrvpBeEBPFbLkKFiqM6BE+GZA1+W9FSI47sZuiB7V6xWGhqHvX3LEP7XWHoszjy1j3F05W7bOpbO3xOeNNSC7ToFYdfKF0jLfG3cTOSKl78b0eXKJ7Drvac+swdzSKSqdksyRiTfvFsKnwQ+AyTNvabncemQAuYJaPFq+iJ4/T38euiujEBwv3n0ON8CX/shpe25pc1w0zGoHSGXsdfrzCT9Ro4HuDqcyG/MdaBcN7F3ljtIY7f9fASEv4bfLBMiqSocemgj5Uw8e2/5DHpSrgNJV//eQBR23nnX/yT/TJ7KAV5W/LttClrZqlo0epQUxvgJp5gNs0o66waccOy7eFO0AJUq9YrBOEiAdtg55LRLp2RI1fJjUXkl0/pnd09n3gzqGtXYgmsGn4nYaw7/FjKsiwHSdwahlGuefL6CjCR6ZGAwxFpxWr2YmhPOTo6ePOEdQf49s4eUSowMDJIMWsS+NSncIjTyOI=
-    file: "${THE_JAR}"
-    on:
-      repo: vpzomtrrfrt/exparvis
-      all_branches: true
-      tags: true
-  - provider: script
-    script: ./deployscript.sh
-    on:
-      repo: vpzomtrrfrt/exparvis
-      all_branches: true
-      tags: true
+	- provider: releases
+	  api_key:
+		  secure: ttvhQOd0FIggFWrL9Nsq4knUUoxp9t0uCwehyLP1o9yWTZKRVfgIf+UoUn42GJCGdOntzd09yQbGzzZTEYBGw2/EM16oJSZxUHul1TaPDIQ4FGxhB9nH6ysGhknIcjCRY7yt9kGuXHVbW0J6gTIy0V/FNNtoQCcwVbZAwTLWAg7mt441XbvwmYeX2p1NekzfKM7ni6E3ZdrvpBeEBPFbLkKFiqM6BE+GZA1+W9FSI47sZuiB7V6xWGhqHvX3LEP7XWHoszjy1j3F05W7bOpbO3xOeNNSC7ToFYdfKF0jLfG3cTOSKl78b0eXKJ7Drvac+swdzSKSqdksyRiTfvFsKnwQ+AyTNvabncemQAuYJaPFq+iJ4/T38euiujEBwv3n0ON8CX/shpe25pc1w0zGoHSGXsdfrzCT9Ro4HuDqcyG/MdaBcN7F3ljtIY7f9fASEv4bfLBMiqSocemgj5Uw8e2/5DHpSrgNJV//eQBR23nnX/yT/TJ7KAV5W/LttClrZqlo0epQUxvgJp5gNs0o66waccOy7eFO0AJUq9YrBOEiAdtg55LRLp2RI1fJjUXkl0/pnd09n3gzqGtXYgmsGn4nYaw7/FjKsiwHSdwahlGuefL6CjCR6ZGAwxFpxWr2YmhPOTo6ePOEdQf49s4eUSowMDJIMWsS+NSncIjTyOI=
+		  file: "${THE_JAR}"
+		  on:
+			  repo: vpzomtrrfrt/exparvis
+			  all_branches: true
+			  tags: true
+	- provider: script
+	  script: ./deployscript.sh
+	  on:
+		  repo: vpzomtrrfrt/exparvis
+		  all_branches: true
+		  tags: true
