@@ -6,16 +6,15 @@ import com.google.common.base.Predicate
 import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.crafting.FurnaceRecipes
-import net.minecraft.item.{Item, ItemStack, ItemSword}
+import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumHand
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
-import net.minecraftforge.event.world.BlockEvent.{BreakEvent, HarvestDropsEvent}
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -98,8 +97,9 @@ object ExParvis {
 
   @SubscribeEvent
   def onBlockDrops(event: HarvestDropsEvent): Unit = {
-    if(event.getHarvester != null) {
+    if (event.getHarvester != null) {
       val sneaking = event.getHarvester.isSneaking
+
       def applyDrops(siftingType: SiftingType): Unit = {
         SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
           case Some(x) =>
@@ -112,7 +112,7 @@ object ExParvis {
       }
 
       val heldItem = event.getHarvester.getHeldItem(EnumHand.MAIN_HAND)
-      if(heldItem != null) {
+      if (heldItem != null) {
         if (sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
           // it's a stick
           applyDrops(SiftingType.STICK)

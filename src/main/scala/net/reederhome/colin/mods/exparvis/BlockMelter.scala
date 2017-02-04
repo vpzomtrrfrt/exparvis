@@ -3,7 +3,7 @@ package net.reederhome.colin.mods.exparvis
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
 import net.minecraft.creativetab.CreativeTabs
-import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.tileentity.TileEntity
@@ -32,13 +32,13 @@ object BlockMelter extends BlockModelContainer(Material.ROCK) {
     else if (held != null && held.getItem == Items.BUCKET && te.lava > 1000) {
       te.lava -= 1000
       held.stackSize -= 1
-      if(!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
+      if (!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
         player.dropItem(Items.LAVA_BUCKET, 1)
       }
     }
     else {
       player.sendMessage(new TextComponentTranslation("tile.melter.status", new Integer(te.getEquivalentCobble), new Integer(te.lava.toInt), new Integer(te.getMeltSpeed)))
-      if(te.getMeltSpeed == 0) {
+      if (te.getMeltSpeed == 0) {
         player.sendMessage(new TextComponentTranslation("tile.melter.advice1"))
       }
     }

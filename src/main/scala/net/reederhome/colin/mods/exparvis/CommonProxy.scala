@@ -2,7 +2,6 @@ package net.reederhome.colin.mods.exparvis
 
 import net.minecraft.block.Block
 import net.minecraft.item.{Item, ItemBlock}
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.registry.GameRegistry
 
 class CommonProxy {
@@ -12,7 +11,7 @@ class CommonProxy {
     registerItem(ItemHammer.Stone, "hammerStone")
     registerItem(ItemHammer.Iron, "hammerIron")
     registerItem(ItemOreNugget, "oreNugget")
-    ItemOreNugget.Type.getTypes.foreach((f) => registerBlock(new BlockNuggetOre(f), "nuggetOre_"+f.getName))
+    ItemOreNugget.Type.getTypes.foreach((f) => registerBlock(new BlockNuggetOre(f), "nuggetOre_" + f.getName))
 
     GameRegistry.registerTileEntity(classOf[TileEntityMelter], "Melter")
   }

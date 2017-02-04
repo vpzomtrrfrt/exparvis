@@ -1,19 +1,16 @@
 package net.reederhome.colin.mods.exparvis
 
 import net.minecraft.block.state.IBlockState
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
-import net.minecraft.inventory.IInventory
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
 import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.text.{ITextComponent, TextComponentTranslation}
 import net.minecraft.util.{EnumFacing, ITickable}
 import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.fluids.{Fluid, FluidRegistry, FluidStack, FluidTankInfo}
 import net.minecraftforge.fluids.capability.{CapabilityFluidHandler, FluidTankProperties, IFluidHandler, IFluidTankProperties}
+import net.minecraftforge.fluids.{FluidRegistry, FluidStack}
 import net.minecraftforge.items.{CapabilityItemHandler, IItemHandler}
 import net.minecraftforge.oredict.OreDictionary
 
@@ -33,7 +30,7 @@ class TileEntityMelter extends TileEntity with ITickable {
     if (p_getCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
       return FluidHandler.asInstanceOf[T]
     }
-    if(p_getCapability_1_ == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+    if (p_getCapability_1_ == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
       return ItemHandler.asInstanceOf[T]
     }
     super.getCapability(p_getCapability_1_, p_getCapability_2_)
@@ -163,7 +160,11 @@ class TileEntityMelter extends TileEntity with ITickable {
       null // must be smaller than 1 (not sure if this ever happens)
     }
 
-    override def getStackInSlot(i: Int): ItemStack = if(extraCobble) { new ItemStack(Blocks.COBBLESTONE) } else { null }
+    override def getStackInSlot(i: Int): ItemStack = if (extraCobble) {
+      new ItemStack(Blocks.COBBLESTONE)
+    } else {
+      null
+    }
 
     override def extractItem(i: Int, i1: Int, b: Boolean): ItemStack = null
   }
