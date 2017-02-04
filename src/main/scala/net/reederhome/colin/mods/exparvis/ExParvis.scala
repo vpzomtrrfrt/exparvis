@@ -6,7 +6,6 @@ import com.google.common.base.Predicate
 import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.crafting.FurnaceRecipes
 import net.minecraft.item.{Item, ItemStack}
@@ -98,8 +97,9 @@ object ExParvis {
 
   @SubscribeEvent
   def onBlockDrops(event: HarvestDropsEvent): Unit = {
-    if(event.getHarvester != null) {
+    if (event.getHarvester != null) {
       val sneaking = event.getHarvester.isSneaking
+
       def applyDrops(siftingType: SiftingType): Unit = {
         SiftingRecipes.getDrops(siftingType, event.getState.getBlock) match {
           case Some(x) =>
@@ -112,7 +112,7 @@ object ExParvis {
       }
 
       val heldItem = event.getHarvester.getHeldItem(EnumHand.MAIN_HAND)
-      if(heldItem != null) {
+      if (heldItem != null) {
         if (sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
           // it's a stick
           applyDrops(SiftingType.STICK)

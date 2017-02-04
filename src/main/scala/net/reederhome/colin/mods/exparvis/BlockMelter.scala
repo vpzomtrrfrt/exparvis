@@ -3,7 +3,7 @@ package net.reederhome.colin.mods.exparvis
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
 import net.minecraft.creativetab.CreativeTabs
-import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.tileentity.TileEntity

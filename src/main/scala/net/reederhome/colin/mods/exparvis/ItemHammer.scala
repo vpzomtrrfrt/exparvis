@@ -5,7 +5,7 @@ import net.minecraft.item.Item.ToolMaterial
 import net.minecraft.item.ItemPickaxe
 
 class ItemHammer(toolMaterial: ToolMaterial) extends ItemPickaxe(toolMaterial) {
-  setUnlocalizedName("hammer."+toolMaterial.name())
+  setUnlocalizedName("hammer." + toolMaterial.name())
   setCreativeTab(CreativeTabs.TOOLS)
 }
 

@@ -21,7 +21,7 @@ object ItemOreNugget extends Item {
   }
 
   def getColor(stack: ItemStack, layer: Int): Int = {
-    if(layer == 1) {
+    if (layer == 1) {
       Type.map.get(stack.getMetadata) match {
         case Some(x) => return x.color
         case None =>
@@ -40,7 +40,7 @@ object ItemOreNugget extends Item {
 
     def getStack: ItemStack = ItemOreNugget.getStack(this)
 
-    def getName: String = base+"_"+resource
+    def getName: String = base + "_" + resource
   }
 
   object Type {

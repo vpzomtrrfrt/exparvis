@@ -14,8 +14,11 @@ import net.minecraft.util.{EnumFacing, ITickable}
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.fluids.{Fluid, FluidRegistry, FluidStack, FluidTankInfo}
 import net.minecraftforge.fluids.capability.{CapabilityFluidHandler, FluidTankProperties, IFluidHandler, IFluidTankProperties}
+import net.minecraftforge.fluids.{FluidRegistry, FluidStack}
+import net.minecraftforge.items.{CapabilityItemHandler, IItemHandler}
+import net.minecraftforge.oredict.OreDictionary
 
-class TileEntityMelter extends TileEntity with IInventory with ITickable {
+class TileEntityMelter extends TileEntity with ITickable {
   val MAX_LAVA = 4000
   val MAX_STONE = 11000
   val RATIO = 4.0
@@ -25,47 +28,14 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
   var stone = 0
   var lastSyncState: IBlockState = _
 
-  override def decrStackSize(i: Int, i1: Int): ItemStack = ItemStack.EMPTY
-
-  override def closeInventory(entityPlayer: EntityPlayer): Unit = {}
-
-  override def getSizeInventory: Int = 1
-
-  override def getInventoryStackLimit: Int = 1
-
-  override def clear(): Unit = {
-    extraCobble = false
-  }
-
-  override def isItemValidForSlot(i: Int, itemStack: ItemStack): Boolean = itemStack.getItem == Item.getItemFromBlock(Blocks.COBBLESTONE)
-
-  override def openInventory(entityPlayer: EntityPlayer): Unit = {}
-
-  override def getFieldCount: Int = 0
-
-  override def getField(i: Int): Int = 0
-
-  override def setInventorySlotContents(i: Int, itemStack: ItemStack): Unit = {
-    extraCobble = isItemValidForSlot(i, itemStack) && itemStack.getCount > 0
-  }
-
-  override def getStackInSlot(i: Int): ItemStack = if (extraCobble) new ItemStack(Blocks.COBBLESTONE) else ItemStack.EMPTY
-
-  override def removeStackFromSlot(i: Int): ItemStack = ItemStack.EMPTY
-
-  override def setField(i: Int, i1: Int): Unit = {}
-
-  override def getDisplayName: ITextComponent = new TextComponentTranslation(getName)
-
-  override def getName: String = "tile.melter.name"
-
-  override def hasCustomName: Boolean = false
-
-  override def hasCapability(p_hasCapability_1_ : Capability[_], p_hasCapability_2_ : EnumFacing): Boolean = p_hasCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(p_hasCapability_1_, p_hasCapability_2_)
+  override def hasCapability(p_hasCapability_1_ : Capability[_], p_hasCapability_2_ : EnumFacing): Boolean = p_hasCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || p_hasCapability_1_ == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(p_hasCapability_1_, p_hasCapability_2_)
 
   override def getCapability[T](p_getCapability_1_ : Capability[T], p_getCapability_2_ : EnumFacing): T = {
-    if(p_getCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-      return Handler.asInstanceOf[T]
+    if (p_getCapability_1_ == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+      return FluidHandler.asInstanceOf[T]
+    }
+    if (p_getCapability_1_ == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+      return ItemHandler.asInstanceOf[T]
     }
     super.getCapability(p_getCapability_1_, p_getCapability_2_)
   }
@@ -143,9 +113,7 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
 
   def getBlockState: IBlockState = BlockMelter.getActualState(world.getBlockState(pos), world, pos)
 
-  override def isUsableByPlayer(entityPlayer: EntityPlayer): Boolean = false
-
-  object Handler extends IFluidHandler {
+  object FluidHandler extends IFluidHandler {
     override def drain(fluidStack: FluidStack, really: Boolean): FluidStack = {
       if (fluidStack.getFluid == FluidRegistry.LAVA) drain(fluidStack.amount, really)
       else new FluidStack(fluidStack.getFluid, 0)
@@ -161,6 +129,48 @@ class TileEntityMelter extends TileEntity with IInventory with ITickable {
     override def fill(fluidStack: FluidStack, really: Boolean): Int = 0
 
     override def getTankProperties: Array[IFluidTankProperties] = Array(new FluidTankProperties(new FluidStack(FluidRegistry.LAVA, lava.toInt), MAX_LAVA, false, lava > 0))
+  }
+
+  object ItemHandler extends IItemHandler {
+    override def getSlots: Int = 1
+
+    override def insertItem(i: Int, itemStack: ItemStack, simulate: Boolean): ItemStack = {
+      if (i != 0) {
+        // slot doesn't exist
+        return itemStack
+      }
+      if (!OreDictionary.itemMatches(new ItemStack(Blocks.COBBLESTONE), itemStack, false)) {
+        // invalid item
+        return itemStack
+      }
+      if (extraCobble) {
+        // already full
+        return itemStack
+      }
+      if (itemStack.stackSize == 1) {
+        if (!simulate) {
+          extraCobble = true
+        }
+        return null
+      }
+      if (itemStack.stackSize > 1) {
+        if (!simulate) {
+          extraCobble = true
+        }
+        val tr = itemStack.copy()
+        tr.stackSize -= 1
+        return tr
+      }
+      null // must be smaller than 1 (not sure if this ever happens)
+    }
+
+    override def getStackInSlot(i: Int): ItemStack = if (extraCobble) {
+      new ItemStack(Blocks.COBBLESTONE)
+    } else {
+      null
+    }
+
+    override def extractItem(i: Int, i1: Int, b: Boolean): ItemStack = null
   }
 
   override def isEmpty: Boolean = !extraCobble

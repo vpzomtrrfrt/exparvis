@@ -39,14 +39,14 @@ class ClientProxy extends CommonProxy {
 
     Minecraft.getMinecraft.getBlockColors.registerBlockColorHandler(new IBlockColor {
       override def colorMultiplier(iBlockState: IBlockState, iBlockAccess: IBlockAccess, blockPos: BlockPos, i: Int): Int = iBlockState.getBlock match {
-        case b : BlockNuggetOre => b.getColor
+        case b: BlockNuggetOre => b.getColor
         case _ => 0xFFFFFF
       }
-    }, BlockNuggetOre.getBlocks.toSeq : _*)
+    }, BlockNuggetOre.getBlocks.toSeq: _*)
     Minecraft.getMinecraft.getItemColors.registerItemColorHandler(new IItemColor {
       override def getColorFromItemstack(itemStack: ItemStack, i: Int): Int = itemStack.getItem match {
-        case ib : ItemBlock => ib.block match {
-          case b : BlockNuggetOre => b.getColor
+        case ib: ItemBlock => ib.block match {
+          case b: BlockNuggetOre => b.getColor
           case _ => 0xFFFFFF
         }
         case _ => 0xFFFFFF
