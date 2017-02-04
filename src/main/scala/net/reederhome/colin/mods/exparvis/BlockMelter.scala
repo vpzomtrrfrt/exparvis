@@ -21,7 +21,7 @@ object BlockMelter extends BlockModelContainer(Material.ROCK) {
 
   override def createNewTileEntity(world: World, i: Int): TileEntity = new TileEntityMelter
 
-  override def onBlockActivated(world : World, pos : BlockPos, state : IBlockState, player : EntityPlayer, hand : EnumHand, p_onBlockActivated_6_ : EnumFacing, p_onBlockActivated_7_ : Float, p_onBlockActivated_8_ : Float, p_onBlockActivated_9_ : Float): Boolean = {
+  override def onBlockActivated(world: World, pos: BlockPos, state: IBlockState, player: EntityPlayer, hand: EnumHand, p_onBlockActivated_6_ : EnumFacing, p_onBlockActivated_7_ : Float, p_onBlockActivated_8_ : Float, p_onBlockActivated_9_ : Float): Boolean = {
     if (world.isRemote) return true
     val held = player.getHeldItem(hand)
     val te = world.getTileEntity(pos).asInstanceOf[TileEntityMelter]
@@ -32,13 +32,13 @@ object BlockMelter extends BlockModelContainer(Material.ROCK) {
     else if (held != null && held.getItem == Items.BUCKET && te.lava > 1000) {
       te.lava -= 1000
       held.shrink(1)
-      if(!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
+      if (!player.inventory.addItemStackToInventory(new ItemStack(Items.LAVA_BUCKET))) {
         player.dropItem(Items.LAVA_BUCKET, 1)
       }
     }
     else {
       player.sendMessage(new TextComponentTranslation("tile.melter.status", new Integer(te.getEquivalentCobble), new Integer(te.lava.toInt), new Integer(te.getMeltSpeed)))
-      if(te.getMeltSpeed == 0) {
+      if (te.getMeltSpeed == 0) {
         player.sendMessage(new TextComponentTranslation("tile.melter.advice1"))
       }
     }
