@@ -41,7 +41,9 @@ object ExParvis {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
 
-    GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick"))
+    // crafting doesn't work yet
+
+    /*GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick"))
     GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble))
     GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood"))
     GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood"))
@@ -49,7 +51,7 @@ object ExParvis {
     ItemOreNugget.Type.getTypes.foreach((f) => {
       GameRegistry.addRecipe(new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
       FurnaceRecipes.instance().addSmelting(Item.getItemFromBlock(BlockNuggetOre.getBlock(f.id)), new ItemStack(f.resourceItem), 1f)
-    })
+    })*/
   }
 
   @EventHandler

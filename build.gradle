@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -29,10 +29,10 @@ plugins {
 */
 version = "0.3.2"
 group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "exparvis-1.11"
+archivesBaseName = "exparvis-1.12"
 
 minecraft {
-    version = "1.11-13.19.1.2199"
+    version = "1.12-14.21.0.2322"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
