@@ -10,7 +10,7 @@ import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.crafting.FurnaceRecipes
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.EnumHand
+import net.minecraft.util.{EnumHand, ResourceLocation}
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
@@ -31,6 +31,8 @@ import scala.util.control.Breaks
 object ExParvis {
   final val NAME = "Ex Parvis"
   final val MODID = "exparvis"
+  
+  final val RECIPE_GROUP = new ResourceLocation(MODID, "recipes")
 
   @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
     serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")
@@ -43,15 +45,20 @@ object ExParvis {
 
     // crafting doesn't work yet
 
-    /*GameRegistry.addRecipe(new ShapedOreRecipe(BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick"))
-    GameRegistry.addRecipe(new ShapedOreRecipe(Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble))
-    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood"))
-    GameRegistry.addRecipe(new ShapedOreRecipe(ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood"))
+    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick")
+      .setRegistryName(MODID, "recipe_melter"))
+    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble)
+      .setRegistryName(MODID, "recipe_cobble_pebbles"))
+    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood")
+      .setRegistryName(MODID, "recipe_hammerStone"))
+    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood")
+      .setRegistryName(MODID, "recipe_hammerIron"))
 
     ItemOreNugget.Type.getTypes.foreach((f) => {
-      GameRegistry.addRecipe(new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
+      GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
+        .setRegistryName(MODID, "recipe_nuggetOre_"+f.resource))
       FurnaceRecipes.instance().addSmelting(Item.getItemFromBlock(BlockNuggetOre.getBlock(f.id)), new ItemStack(f.resourceItem), 1f)
-    })*/
+    })
   }
 
   @EventHandler
