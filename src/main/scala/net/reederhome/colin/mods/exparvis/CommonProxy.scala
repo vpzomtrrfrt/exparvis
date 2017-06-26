@@ -2,7 +2,11 @@ package net.reederhome.colin.mods.exparvis
 
 import net.minecraft.block.Block
 import net.minecraft.item.{Item, ItemBlock}
+import net.minecraftforge.event.RegistryEvent.Register
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.registry.GameRegistry
+
+import scala.collection.mutable.ArrayBuffer
 
 class CommonProxy {
   def preInit(): Unit = {
@@ -21,14 +25,25 @@ class CommonProxy {
 
   }
 
+  private val items: ArrayBuffer[Item] = new ArrayBuffer[Item]
+  private val blocks: ArrayBuffer[Block] = new ArrayBuffer[Block]
+
+  @SubscribeEvent
+  def onRegisterItems(event: Register[Item]): Unit = event.getRegistry.registerAll(items : _*)
+
+  @SubscribeEvent
+  def onRegisterBlocks(event: Register[Block]): Unit = event.getRegistry.registerAll(blocks : _*)
+
   def registerBlock(block: Block, name: String): Unit = {
     block.setRegistryName(name)
-    GameRegistry.register(block)
+    blocks.append(block)
     registerItem(new ItemBlock(block), name)
   }
 
   def registerItem(item: Item, name: String): Unit = {
     item.setRegistryName(name)
-    GameRegistry.register(item)
+    items.append(item)
   }
+
+  def getItems: Array[Item] = items.toArray
 }

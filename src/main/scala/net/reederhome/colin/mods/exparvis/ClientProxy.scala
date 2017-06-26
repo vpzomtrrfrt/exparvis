@@ -12,12 +12,6 @@ import net.minecraft.world.IBlockAccess
 import scala.collection.mutable.ArrayBuffer
 
 class ClientProxy extends CommonProxy {
-  var items: ArrayBuffer[Item] = new ArrayBuffer[Item]
-
-  override def registerItem(item: Item, name: String): Unit = {
-    super.registerItem(item, name)
-    items.append(item)
-  }
 
   override def preInit(): Unit = {
     super.preInit()
@@ -28,7 +22,7 @@ class ClientProxy extends CommonProxy {
 
   override def init(): Unit = {
     super.init()
-    for (item <- items) {
+    for (item <- getItems) {
       registerModel(item)
     }
 
@@ -45,7 +39,7 @@ class ClientProxy extends CommonProxy {
     }, BlockNuggetOre.getBlocks.toSeq: _*)
     Minecraft.getMinecraft.getItemColors.registerItemColorHandler(new IItemColor {
       override def getColorFromItemstack(itemStack: ItemStack, i: Int): Int = itemStack.getItem match {
-        case ib: ItemBlock => ib.block match {
+        case ib: ItemBlock => ib.getBlock match {
           case b: BlockNuggetOre => b.getColor
           case _ => 0xFFFFFF
         }

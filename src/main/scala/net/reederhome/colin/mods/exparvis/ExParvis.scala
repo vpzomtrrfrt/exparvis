@@ -7,12 +7,13 @@ import net.minecraft.block.IGrowable
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.init.{Blocks, Items}
-import net.minecraft.item.crafting.FurnaceRecipes
+import net.minecraft.item.crafting.{FurnaceRecipes, IRecipe}
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.{EnumHand, ResourceLocation}
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.{EnumHand, ResourceLocation}
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent
 import net.minecraftforge.fml.common.Mod.EventHandler
@@ -42,30 +43,34 @@ object ExParvis {
   def preInit(event: FMLPreInitializationEvent): Unit = {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
-
-    // crafting doesn't work yet
-
-    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick")
-      .setRegistryName(MODID, "recipe_melter"))
-    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble)
-      .setRegistryName(MODID, "recipe_cobble_pebbles"))
-    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood")
-      .setRegistryName(MODID, "recipe_hammerStone"))
-    GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood")
-      .setRegistryName(MODID, "recipe_hammerIron"))
-
-    ItemOreNugget.Type.getTypes.foreach((f) => {
-      GameRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
-        .setRegistryName(MODID, "recipe_nuggetOre_"+f.resource))
-      FurnaceRecipes.instance().addSmelting(Item.getItemFromBlock(BlockNuggetOre.getBlock(f.id)), new ItemStack(f.resourceItem), 1f)
-    })
+    MinecraftForge.EVENT_BUS.register(proxy)
   }
 
   @EventHandler
   def init(event: FMLInitializationEvent): Unit = {
     proxy.init()
+    ItemOreNugget.Type.getTypes.foreach((f) => {
+      FurnaceRecipes.instance().addSmeltingRecipeForBlock(BlockNuggetOre.getBlock(f.id), new ItemStack(f.resourceItem), 1f)
+    })
   }
 
+  @SubscribeEvent
+  def onRegistryEvent(event: RegistryEvent.Register[IRecipe]) {
+    event.getRegistry.registerAll(
+      new ShapedOreRecipe(RECIPE_GROUP, BlockMelter, "bbb", " b ", "bbb", 'b': Character, "ingotBrick")
+        .setRegistryName(MODID, "recipe_melter"),
+      new ShapedOreRecipe(RECIPE_GROUP, Blocks.COBBLESTONE, "pp", "pp", 'p': Character, ItemPebble)
+        .setRegistryName(MODID, "recipe_cobble_pebbles"),
+      new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Stone, "mmm", "msm", " s ", 'm': Character, "cobblestone", 's': Character, "stickWood")
+        .setRegistryName(MODID, "recipe_hammerStone"),
+      new ShapedOreRecipe(RECIPE_GROUP, ItemHammer.Iron, "mmm", "msm", " s ", 'm': Character, "ingotIron", 's': Character, "stickWood")
+        .setRegistryName(MODID, "recipe_hammerIron"))
+
+    ItemOreNugget.Type.getTypes.foreach((f) => {
+      event.getRegistry.register(new ShapedOreRecipe(RECIPE_GROUP, new ItemStack(BlockNuggetOre.getBlock(f.id)), "mm", "mm", 'm': Character, ItemOreNugget.getStack(f))
+        .setRegistryName(MODID, "recipe_nuggetOre_" + f.resource))
+    })
+  }
 
   @SubscribeEvent
   def onLivingUpdate(event: LivingUpdateEvent): Unit = {
