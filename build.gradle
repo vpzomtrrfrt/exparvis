@@ -27,7 +27,7 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
-version = "0.3.4"
+version = "0.4.0"
 group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "exparvis-1.12"
 

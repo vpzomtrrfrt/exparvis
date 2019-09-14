@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.{EnumHand, ResourceLocation}
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.config.Configuration
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent
@@ -35,15 +36,45 @@ object ExParvis {
   
   final val RECIPE_GROUP = new ResourceLocation(MODID, "recipes")
 
+  var configuration: Configuration = _
+
   @SidedProxy(clientSide = "net.reederhome.colin.mods.exparvis.ClientProxy",
     serverSide = "net.reederhome.colin.mods.exparvis.ServerProxy")
   var proxy: CommonProxy = _
+
+  var enableCompost: Boolean = true
+  var compostTime: Int = 200
+  var compostCount: Int = 8
+
+  var enableRainFill: Boolean = true
+  var rainFillTime: Int = 200
+
+  var enableSneakGrow: Boolean = true
+
+  var enableStickSift: Boolean = true
 
   @EventHandler
   def preInit(event: FMLPreInitializationEvent): Unit = {
     proxy.preInit()
     MinecraftForge.EVENT_BUS.register(this)
     MinecraftForge.EVENT_BUS.register(proxy)
+
+    configuration = new Configuration(event.getSuggestedConfigurationFile)
+
+    configuration.load()
+
+    enableCompost = configuration.get("Compost", "Enabled", enableCompost, "Whether dropped saplings should turn into dirt").getBoolean
+    compostTime = configuration.get("Compost", "Time", compostTime, "Ticks taken for saplings to compost").getInt
+    compostCount = configuration.get("Compost", "Count", compostCount, "Number of saplings required for each dirt block").getInt
+
+    enableRainFill = configuration.get("BucketFill", "Enabled", enableRainFill, "Whether buckets in rain should fill with water").getBoolean
+    rainFillTime = configuration.get("BucketFill", "Time", rainFillTime, "Ticks taken for buckets to fill in rain").getInt
+
+    enableSneakGrow = configuration.get("SneakGrow", "Enabled", enableSneakGrow, "Whether players sneaking should increase crop growth speed").getBoolean
+
+    enableStickSift = configuration.get("Sifting", "Enabled", enableStickSift, "Whether sticks should be able to sift for materials").getBoolean
+
+    configuration.save()
   }
 
   @EventHandler
@@ -74,39 +105,41 @@ object ExParvis {
 
   @SubscribeEvent
   def onLivingUpdate(event: LivingUpdateEvent): Unit = {
-    val entity = event.getEntityLiving
-    val world = entity.world
-    val data = entity.getEntityData
-    val lastSneakKey = "LastTickSneaking"
-    val range = 2
+    if(enableSneakGrow) {
+      val entity = event.getEntityLiving
+      val world = entity.world
+      val data = entity.getEntityData
+      val lastSneakKey = "LastTickSneaking"
+      val range = 2
 
-    if (world.isRemote) {
-      return
-    }
+      if (world.isRemote) {
+        return
+      }
 
-    if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.03) {
-      var success = false
-      Breaks.breakable {
-        for (i <- 1 to 5) {
-          val x = event.getEntity.posX + Random.nextGaussian() * range
-          val y = event.getEntity.posY + Random.nextInt(3) - 1
-          val z = event.getEntity.posZ + Random.nextGaussian() * range
-          val pos = new BlockPos(x, y, z)
-          val state = world.getBlockState(pos)
-          val block = state.getBlock
-          if (block.isInstanceOf[IGrowable] && block != Blocks.GRASS) {
-            val growable = block.asInstanceOf[IGrowable]
-            if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
-              growable.grow(world, new java.util.Random(), pos, state)
-              success = true
-              world.playEvent(2005, pos, 0)
-              Breaks.break()
+      if (data.hasKey(lastSneakKey) && data.getBoolean(lastSneakKey) != entity.isSneaking && Math.random() < 0.03) {
+        var success = false
+        Breaks.breakable {
+          for (i <- 1 to 5) {
+            val x = event.getEntity.posX + Random.nextGaussian() * range
+            val y = event.getEntity.posY + Random.nextInt(3) - 1
+            val z = event.getEntity.posZ + Random.nextGaussian() * range
+            val pos = new BlockPos(x, y, z)
+            val state = world.getBlockState(pos)
+            val block = state.getBlock
+            if (block.isInstanceOf[IGrowable] && block != Blocks.GRASS) {
+              val growable = block.asInstanceOf[IGrowable]
+              if (growable.canGrow(world, pos, state, world.isRemote) && growable.canUseBonemeal(world, Random.self, pos, state)) {
+                growable.grow(world, new java.util.Random(), pos, state)
+                success = true
+                world.playEvent(2005, pos, 0)
+                Breaks.break()
+              }
             }
           }
         }
       }
+      data.setBoolean(lastSneakKey, entity.isSneaking)
     }
-    data.setBoolean(lastSneakKey, entity.isSneaking)
   }
 
   @SubscribeEvent
@@ -127,7 +160,7 @@ object ExParvis {
 
       val heldItem = event.getHarvester.getHeldItem(EnumHand.MAIN_HAND)
       if (heldItem != null) {
-        if (sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
+        if (enableStickSift && sneaking && OreDictionary.itemMatches(new ItemStack(Items.STICK), heldItem, false)) {
           // it's a stick
           applyDrops(SiftingType.STICK)
         }
@@ -146,15 +179,17 @@ object ExParvis {
 
   @SubscribeEvent
   def onTick(event: WorldTickEvent): Unit = {
-    val numToCompost = 8
-    val timeToCompost = 200
-
     val items: List[EntityItem] = event.world.getEntities[EntityItem](classOf[EntityItem], new Predicate[EntityItem] {
 
       override def apply(input: EntityItem): Boolean = {
-        getAge(input) >= timeToCompost &&
-          ((input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.SAPLING) && input.getEntityItem.getCount >= numToCompost) ||
-            input.getEntityItem.getItem == Items.BUCKET && event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ)))
+        val age = getAge(input)
+        if(enableRainFill && age >= rainFillTime && input.getEntityItem.getItem == Items.BUCKET) {
+          event.world.isRainingAt(new BlockPos(input.posX, input.posY, input.posZ))
+        } else if(age >= compostTime && enableCompost && input.getEntityItem.getItem == Item.getItemFromBlock(Blocks.SAPLING)) {
+          input.getEntityItem.getCount >= compostCount
+        } else {
+          false
+        }
       }
     }).asScala.toList
     for (item: EntityItem <- items) {
@@ -166,8 +201,8 @@ object ExParvis {
       }
       else {
         var composted = 0
-        while (stack.getCount >= numToCompost) {
-          stack.shrink(numToCompost)
+        while (stack.getCount >= compostCount) {
+          stack.shrink(compostCount)
           composted += 1
         }
         result = new ItemStack(Blocks.DIRT, composted)
