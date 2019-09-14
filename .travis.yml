@@ -2,7 +2,7 @@ language: scala
 scala:
     - 2.10.1
 jdk:
-    - oraclejdk8
+    - openjdk8
 before_deploy:
     - ./gradlew build
     - export THE_JAR=$(ls build/libs/exparvis*.jar | head -n 1)
