@@ -29,10 +29,10 @@ plugins {
 */
 version = "0.4.0"
 group= "net.reederhome.colin.mods.exparvis" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "exparvis-1.12"
+archivesBaseName = "exparvis-1.12.2"
 
 minecraft {
-    version = "1.12-14.21.0.2373"
+    version = "1.12.2-14.23.5.2768"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
